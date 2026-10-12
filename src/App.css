@@ -198,3 +198,72 @@ button {
   font-size: 11px;
   overflow-wrap: anywhere;
 }
+
+.event-chip {
+  margin-top: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  background: #dcece5;
+  color: #205b46;
+  font-size: 11px;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.event-chip:hover {
+  background: #c4e2d3;
+}
+
+.event-chip:focus-visible {
+  outline: 2px solid #5379e8;
+  outline-offset: 2px;
+}
+
+.event-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 20px;
+  background: white;
+  border: 1px solid #e1e4e9;
+  border-radius: 12px;
+}
+
+.event-form h3 {
+  width: 100%;
+  margin: 0;
+}
+
+.event-form input {
+  min-width: 0;
+  max-width: 100%;
+  padding: 10px;
+  border: 1px solid #d9dce3;
+  border-radius: 8px;
+}
+
+.event-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.event-form-actions button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #5379e8;
+  color: white;
+}
+
+.event-form-actions .delete-button {
+  background: #c93636;
+}
+
+.event-form-actions .cancel-button {
+  background: #eceef2;
+  color: #272b33;
+}

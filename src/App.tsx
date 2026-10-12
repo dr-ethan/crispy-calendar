@@ -14,6 +14,7 @@ function App() {
     const [eventTitle, setEventTitle] = useState('');
     const [eventTime, setEventTime] = useState('09:00');
     const [showEventForm, setShowEventForm] = useState(false);
+    const [editingEventId, setEditingEventId] = useState<number | null>(null);
 
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -49,19 +50,66 @@ function App() {
             String(selectedDate.getDate()).padStart(2, '0'),
         ].join('-');
 
-        const newEvent: CalendarEvent = {
+        if (editingEventId !== null) {
+            // Update the existing event
+            setEvents((previousEvents) =>
+            previousEvents.map((event) =>
+                event.id === editingEventId
+                ? {
+                    ...event,
+                    title: eventTitle.trim(),
+                    time: eventTime,
+                    date,
+                    }
+                : event
+            )
+            );
+        } else {
+            // Create a new event
+            const newEvent: CalendarEvent = {
             id: Date.now(),
             title: eventTitle.trim(),
             date,
             time: eventTime,
-        };
+            };
 
-        setEvents((previousEvents) => [...previousEvents, newEvent]);
+            setEvents((previousEvents) => [...previousEvents, newEvent]);
+        }
+
         setEventTitle('');
         setEventTime('09:00');
+        setEditingEventId(null);
         setShowEventForm(false);
-    }
+        }
 
+    function editEvent(event: CalendarEvent) {
+        setSelectedDate(new Date(`${event.date}T12:00:00`));
+        setEventTitle(event.title);
+        setEventTime(event.time);
+        setEditingEventId(event.id);
+        setShowEventForm(true);
+        }
+
+        function deleteEvent() {
+        if (editingEventId === null) return;
+
+        const confirmed = window.confirm(
+            'Are you sure you want to delete this event?'
+        );
+
+        if (!confirmed) return;
+
+        setEvents((previousEvents) =>
+            previousEvents.filter(
+            (event) => event.id !== editingEventId
+            )
+        );
+
+        setEventTitle('');
+        setEventTime('09:00');
+        setEditingEventId(null);
+        setShowEventForm(false);
+        }
     function isSameDay(a: Date, b: Date) {
         return (
         a.getFullYear() === b.getFullYear() &&
@@ -138,13 +186,29 @@ function App() {
               >
                 <span>{day.getDate()}</span>
                 {events
-                .filter((event) => {
-                    const eventDate = new Date(`${event.date}T12:00:00`);
-                    return isSameDay(eventDate, day);
-                })
-                .map((event) => (
-                    <div className="event-chip" key={event.id}>
-                    {event.time} {event.title}
+                    .filter((event) => {
+                        const eventDate = new Date(`${event.date}T12:00:00`);
+                        return isSameDay(eventDate, day);
+                    })
+                    .map((event) => (
+                        <div
+                            className="event-chip"
+                            key={event.id}
+                            role="button"
+                            tabIndex={0}
+                            title="Click to edit event"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                editEvent(event);
+                            }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                editEvent(event);
+                            }
+                        }}
+                    >
+                        {event.time} {event.title}
                     </div>
                 ))}
               </button>
@@ -153,7 +217,15 @@ function App() {
         </div>
       </section>
         <section className="event-section">
-        <button onClick={() => setShowEventForm(!showEventForm)}>
+        <button
+            type="button"
+            onClick={() => {
+            setEventTitle('');
+            setEventTime('09:00');
+            setEditingEventId(null);
+            setShowEventForm(!showEventForm);
+            }}
+        >
             + Add event
         </button>
 
@@ -165,11 +237,30 @@ function App() {
                 addEvent();
             }}
             >
+            <h3>
+                {editingEventId !== null ? 'Edit event' : 'New event'}
+            </h3>
+
             <input
                 type="text"
                 placeholder="What is the event?"
                 value={eventTitle}
                 onChange={(e) => setEventTitle(e.target.value)}
+                required
+            />
+
+            <input
+                type="date"
+                value={[
+                selectedDate.getFullYear(),
+                String(selectedDate.getMonth() + 1).padStart(2, '0'),
+                String(selectedDate.getDate()).padStart(2, '0'),
+                ].join('-')}
+                onChange={(e) => {
+                if (e.target.value) {
+                    setSelectedDate(new Date(`${e.target.value}T12:00:00`));
+                }
+                }}
                 required
             />
 
@@ -180,7 +271,30 @@ function App() {
                 required
             />
 
-            <button type="submit">Save event</button>
+            <div className="event-form-actions">
+                <button type="submit">
+                {editingEventId !== null ? 'Save changes' : 'Create event'}
+                </button>
+
+                {editingEventId !== null && (
+                <button type="button" className="delete-button" onClick={deleteEvent}>
+                    Delete event
+                </button>
+                )}
+
+                <button
+                type="button"
+                className="cancel-button"
+                onClick={() => {
+                    setShowEventForm(false);
+                    setEditingEventId(null);
+                    setEventTitle('');
+                    setEventTime('09:00');
+                }}
+                >
+                Cancel
+                </button>
+            </div>
             </form>
         )}
         </section>
