@@ -19,6 +19,8 @@ function App() {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
 
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
 
@@ -119,23 +121,30 @@ function App() {
     }
 
     return (
-    <main className="app">
+    <main className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
       <header className="calendar-header">
-        <div>
-          <h1>My Calendar</h1>
-          <p>Calendar</p>
-        </div>
+        <div className="header-actions">
+            <button
+                type="button"
+                className="theme-button"
+                onClick={() => setIsDarkMode((current) => !current)}
+                aria-pressed={isDarkMode}
+            >
+                {isDarkMode ? '☀️ Light mode' : '🌙 Dark mode'}
+            </button>
 
-        <button
-          className="today-button"
-          onClick={() => {
-            const now = new Date();
-            setCurrentMonth(now);
-            setSelectedDate(now);
-          }}
-        >
-          Today
-        </button>
+            <button
+                type="button"
+                className="today-button"
+                onClick={() => {
+                const now = new Date();
+                setCurrentMonth(now);
+                setSelectedDate(now);
+                }}
+            >
+                Today
+            </button>
+        </div>
       </header>
 
       <section className="calendar">

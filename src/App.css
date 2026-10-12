@@ -1,3 +1,5 @@
+/* Note that this styling was handled entirely by AI, so expect inefficiencies */
+
 #root {
   width: 100%;
   min-height: 100vh;
@@ -326,4 +328,140 @@ button {
     align-items: flex-start;
     flex-direction: column;
   }
+}
+
+/* Header theme toggle */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.theme-button {
+  padding: 10px 14px;
+  border: 1px solid #e1e4e9;
+  border-radius: 10px;
+  background: white;
+  color: #20242c;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Dark mode page */
+body:has(.app.dark-mode) {
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.app.dark-mode {
+  color: #e5e7eb;
+}
+
+/* Calendar and event panels */
+.app.dark-mode .calendar,
+.app.dark-mode .selected-date,
+.app.dark-mode .event-form {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+/* Headings and regular text */
+.app.dark-mode h1,
+.app.dark-mode h2,
+.app.dark-mode h3,
+.app.dark-mode .calendar-day {
+  color: #e5e7eb;
+}
+
+.app.dark-mode .calendar-header p,
+.app.dark-mode .selected-date p,
+.app.dark-mode .edit-label {
+  color: #9ca3af;
+}
+
+/* Calendar grid */
+.app.dark-mode .calendar-day {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.app.dark-mode .calendar-day:hover {
+  background: #293548;
+}
+
+.app.dark-mode .calendar-day.other-month {
+  background: #18212e;
+  color: #6b7280;
+}
+
+.app.dark-mode .calendar-day.today {
+  border-color: #93aafc;
+}
+
+.app.dark-mode .calendar-day.selected {
+  background: #303f68;
+  border-color: #93aafc;
+}
+
+.app.dark-mode .weekday {
+  color: #9ca3af;
+}
+
+/* Buttons */
+.app.dark-mode .today-button,
+.app.dark-mode .theme-button,
+.app.dark-mode .month-buttons button {
+  background: #293548;
+  border-color: #4b5563;
+  color: #e5e7eb;
+}
+
+.app.dark-mode .today-button:hover,
+.app.dark-mode .theme-button:hover,
+.app.dark-mode .month-buttons button:hover {
+  background: #374151;
+}
+
+/* Event form fields */
+.app.dark-mode .event-form input {
+  background: #111827;
+  border-color: #4b5563;
+  color: #e5e7eb;
+}
+
+.app.dark-mode .event-form input::placeholder {
+  color: #9ca3af;
+}
+
+/* Events shown on the selected date */
+.app.dark-mode .planned-event {
+  background: #293548;
+  border-color: #374151;
+  color: #e5e7eb;
+}
+
+.app.dark-mode .planned-event:hover {
+  background: #303f68;
+  border-color: #536da8;
+}
+
+/* Keep event labels readable */
+.app.dark-mode .event-chip {
+  background: #285344;
+  color: #d1fae5;
+}
+
+.app.dark-mode .event-chip:hover {
+  background: #326b55;
+}
+
+/* Cancel and delete buttons */
+.app.dark-mode .event-form-actions .cancel-button {
+  background: #374151;
+  color: #e5e7eb;
+}
+
+.app.dark-mode .event-form-actions .delete-button {
+  background: #b91c1c;
 }
