@@ -267,3 +267,63 @@ button {
   background: #eceef2;
   color: #272b33;
 }
+
+.selected-date-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.selected-date-header h2 {
+  margin-bottom: 8px;
+}
+
+.planned-events {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planned-event {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px;
+  text-align: left;
+  background: #f7f9fc;
+  border: 1px solid #e8eaf0;
+  border-radius: 10px;
+  color: #20242c;
+}
+
+.planned-event:hover {
+  background: #eef2ff;
+  border-color: #cbd6ff;
+}
+
+.event-time {
+  font-size: 13px;
+  font-weight: 600;
+  color: #5379e8;
+  min-width: 45px;
+}
+
+.event-title {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.edit-label {
+  color: #747b88;
+  font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .selected-date-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

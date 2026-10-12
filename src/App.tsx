@@ -299,16 +299,72 @@ function App() {
         )}
         </section>
       <section className="selected-date">
-        <h2>
-          {selectedDate.toLocaleDateString('en-GB', {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          })}
-        </h2>
-        <p>No events planned. Enjoy the free time!</p>
-      </section>
+        <div className="selected-date-header">
+            <div>
+            <h2>
+                {selectedDate.toLocaleDateString('en-GB', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                })}
+            </h2>
+            <p>
+                {events.filter((event) =>
+                isSameDay(
+                    new Date(`${event.date}T12:00:00`),
+                    selectedDate
+                )
+                ).length === 0
+                ? 'Nothing planned for this day.'
+                : `${
+                    events.filter((event) =>
+                        isSameDay(
+                        new Date(`${event.date}T12:00:00`),
+                        selectedDate
+                        )
+                    ).length
+                    } event(s) planned`}
+            </p>
+            </div>
+
+            <button
+            type="button"
+            className="today-button"
+            onClick={() => {
+                setEventTitle('');
+                setEventTime('09:00');
+                setEditingEventId(null);
+                setShowEventForm(true);
+            }}
+            >
+            + Add event
+            </button>
+        </div>
+
+        <div className="planned-events">
+            {events
+            .filter((event) =>
+                isSameDay(
+                new Date(`${event.date}T12:00:00`),
+                selectedDate
+                )
+            )
+            .sort((a, b) => a.time.localeCompare(b.time))
+            .map((event) => (
+                <button
+                type="button"
+                className="planned-event"
+                key={event.id}
+                onClick={() => editEvent(event)}
+                >
+                <span className="event-time">{event.time}</span>
+                <span className="event-title">{event.title}</span>
+                <span className="edit-label">Edit →</span>
+                </button>
+            ))}
+        </div>
+        </section>
     </main>
   );
 }
