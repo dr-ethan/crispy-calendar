@@ -1,122 +1,126 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+
+  const firstDay = new Date(year, month, 1);
+  const mondayOffset = (firstDay.getDay() + 6) % 7;
+
+  const calendarStart = new Date(year, month, 1 - mondayOffset);
+
+  const days = Array.from({ length: 42 }, (_, index) => {
+    return new Date(
+      calendarStart.getFullYear(),
+      calendarStart.getMonth(),
+      calendarStart.getDate() + index
+    );
+  });
+
+  const today = new Date();
+
+  function changeMonth(amount: number) {
+    setCurrentMonth(new Date(year, month + amount, 1));
+  }
+
+  function isSameDay(a: Date, b: Date) {
+    return (
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate()
+    );
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+    <main className="app">
+      <header className="calendar-header">
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
+          <h1>My Calendar</h1>
+          <p>Calendar</p>
         </div>
+
         <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+          className="today-button"
+          onClick={() => {
+            const now = new Date();
+            setCurrentMonth(now);
+            setSelectedDate(now);
+          }}
         >
-          Count is {count}
+          Today
         </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
+      <section className="calendar">
+        <div className="month-header">
+          <h2>
+            {currentMonth.toLocaleDateString('en-GB', {
+              month: 'long',
+              year: 'numeric',
+            })}
+          </h2>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <div className="month-buttons">
+            <button onClick={() => changeMonth(-1)}>
+              &larr;
+            </button>
+            <button onClick={() => changeMonth(1)}>
+              &rarr;
+            </button>
+          </div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+
+        <div className="calendar-grid">
+          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(
+            (day) => (
+              <div className="weekday" key={day}>
+                {day}
+              </div>
+            )
+          )}
+
+          {days.map((day) => {
+            const isCurrentMonth = day.getMonth() === month;
+            const isToday = isSameDay(day, today);
+            const isSelected = isSameDay(day, selectedDate);
+
+            return (
+              <button
+                key={day.toISOString()}
+                className={[
+                  'calendar-day',
+                  !isCurrentMonth && 'other-month',
+                  isToday && 'today',
+                  isSelected && 'selected',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                onClick={() => setSelectedDate(day)}
+              >
+                {day.getDate()}
+              </button>
+            );
+          })}
         </div>
       </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <section className="selected-date">
+        <h2>
+          {selectedDate.toLocaleDateString('en-GB', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })}
+        </h2>
+        <p>No events planned. Enjoy the free time!</p>
+      </section>
+    </main>
+  );
 }
 
-export default App
+export default App;
