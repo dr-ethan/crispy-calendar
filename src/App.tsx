@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 
 type CalendarEvent = {
@@ -8,9 +8,28 @@ type CalendarEvent = {
   time: string;
 };
 
+const EVENTS_STORAGE_KEY = 'my-calendar-events';
+const THEME_STORAGE_KEY = 'my-calendar-dark-mode';
+
 function App() {
 
-    const [events, setEvents] = useState<CalendarEvent[]>([]);
+    const [events, setEvents] = useState<CalendarEvent[]>(() => {
+        try {
+            const savedEvents = localStorage.getItem(EVENTS_STORAGE_KEY);
+
+            if (savedEvents) {
+                const parsedEvents: unknown = JSON.parse(savedEvents);
+
+                if (Array.isArray(parsedEvents)) {
+                    return parsedEvents as CalendarEvent[];
+                }
+            }
+        } catch (error) {
+            console.error('Could not load saved events:', error);
+        }
+
+        return [];
+    });
     const [eventTitle, setEventTitle] = useState('');
     const [eventTime, setEventTime] = useState('09:00');
     const [showEventForm, setShowEventForm] = useState(false);
@@ -19,8 +38,37 @@ function App() {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
 
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+        try {
+            return localStorage.getItem(THEME_STORAGE_KEY) === 'true';
+        } catch (error) {
+            console.error('Could not load theme preference:', error);
+            return false;
+        }
+    });
+    /* use effect for saving events */
+    useEffect(() => {
+        try {
+            localStorage.setItem(
+            EVENTS_STORAGE_KEY,
+            JSON.stringify(events)
+            );
+        } catch (error) {
+            console.error('Could not save events:', error);
+        }
+    }, [events]);
 
+    /* use effect for saving theme preference */
+    useEffect(() => {
+        try {
+            localStorage.setItem(
+            THEME_STORAGE_KEY,
+            String(isDarkMode)
+            );
+        } catch (error) {
+            console.error('Could not save theme preference:', error);
+        }
+    }, [isDarkMode]);
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
 
