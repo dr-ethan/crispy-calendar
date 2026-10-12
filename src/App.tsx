@@ -1,41 +1,76 @@
 import { useState } from 'react';
 import './App.css';
 
+type CalendarEvent = {
+  id: number;
+  title: string;
+  date: string;
+  time: string;
+};
+
 function App() {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const year = currentMonth.getFullYear();
-  const month = currentMonth.getMonth();
+    const [events, setEvents] = useState<CalendarEvent[]>([]);
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventTime, setEventTime] = useState('09:00');
+    const [showEventForm, setShowEventForm] = useState(false);
 
-  const firstDay = new Date(year, month, 1);
-  const mondayOffset = (firstDay.getDay() + 6) % 7;
+    const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const calendarStart = new Date(year, month, 1 - mondayOffset);
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
 
-  const days = Array.from({ length: 42 }, (_, index) => {
-    return new Date(
-      calendarStart.getFullYear(),
-      calendarStart.getMonth(),
-      calendarStart.getDate() + index
-    );
-  });
+    const firstDay = new Date(year, month, 1);
+    const mondayOffset = (firstDay.getDay() + 6) % 7;
 
-  const today = new Date();
+    const calendarStart = new Date(year, month, 1 - mondayOffset);
 
-  function changeMonth(amount: number) {
-    setCurrentMonth(new Date(year, month + amount, 1));
-  }
+    const days = Array.from({ length: 42 }, (_, index) => {
+        return new Date(
+        calendarStart.getFullYear(),
+        calendarStart.getMonth(),
+        calendarStart.getDate() + index
+        );
+    });
 
-  function isSameDay(a: Date, b: Date) {
+    const today = new Date();
+
+    function changeMonth(amount: number) {
+        setCurrentMonth(new Date(year, month + amount, 1));
+    }
+
+    function addEvent() {
+        if (!eventTitle.trim()) return;
+
+        const date = [
+            selectedDate.getFullYear(),
+            String(selectedDate.getMonth() + 1).padStart(2, '0'),
+            String(selectedDate.getDate()).padStart(2, '0'),
+        ].join('-');
+
+        const newEvent: CalendarEvent = {
+            id: Date.now(),
+            title: eventTitle.trim(),
+            date,
+            time: eventTime,
+        };
+
+        setEvents((previousEvents) => [...previousEvents, newEvent]);
+        setEventTitle('');
+        setEventTime('09:00');
+        setShowEventForm(false);
+    }
+
+    function isSameDay(a: Date, b: Date) {
+        return (
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate()
+        );
+    }
+
     return (
-      a.getFullYear() === b.getFullYear() &&
-      a.getMonth() === b.getMonth() &&
-      a.getDate() === b.getDate()
-    );
-  }
-
-  return (
     <main className="app">
       <header className="calendar-header">
         <div>
@@ -101,13 +136,54 @@ function App() {
                   .join(' ')}
                 onClick={() => setSelectedDate(day)}
               >
-                {day.getDate()}
+                <span>{day.getDate()}</span>
+                {events
+                .filter((event) => {
+                    const eventDate = new Date(`${event.date}T12:00:00`);
+                    return isSameDay(eventDate, day);
+                })
+                .map((event) => (
+                    <div className="event-chip" key={event.id}>
+                    {event.time} {event.title}
+                    </div>
+                ))}
               </button>
             );
           })}
         </div>
       </section>
+        <section className="event-section">
+        <button onClick={() => setShowEventForm(!showEventForm)}>
+            + Add event
+        </button>
 
+        {showEventForm && (
+            <form
+            className="event-form"
+            onSubmit={(e) => {
+                e.preventDefault();
+                addEvent();
+            }}
+            >
+            <input
+                type="text"
+                placeholder="What is the event?"
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
+                required
+            />
+
+            <input
+                type="time"
+                value={eventTime}
+                onChange={(e) => setEventTime(e.target.value)}
+                required
+            />
+
+            <button type="submit">Save event</button>
+            </form>
+        )}
+        </section>
       <section className="selected-date">
         <h2>
           {selectedDate.toLocaleDateString('en-GB', {

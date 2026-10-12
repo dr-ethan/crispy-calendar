@@ -164,3 +164,37 @@ button {
     padding: 6px;
   }
 }
+
+.event-section {
+  margin: 20px 0;
+}
+
+.event-section button {
+  padding: 10px 16px;
+  background: #5379e8;
+  color: white;
+  border-radius: 8px;
+}
+
+.event-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.event-form input {
+  padding: 10px;
+  border: 1px solid #d9dce3;
+  border-radius: 8px;
+}
+
+.event-chip {
+  margin-top: 5px;
+  padding: 4px;
+  border-radius: 4px;
+  background: #dcece5;
+  color: #205b46;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
